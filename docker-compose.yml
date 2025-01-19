@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  database:
+    image: postgres:15
+    container_name: ztpai_postgres
+    environment:
+      POSTGRES_USER: symfony
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: symfony
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    image: php:8.2-cli
+    container_name: ztpai_symfony
+    build:
+      context: ./backend
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
+
+  frontend:
+    image: node:20
+    container_name: ztpai_react
+    build:
+      context: ./frontend
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "3000:3000"
+
+volumes:
+  postgres_data:
