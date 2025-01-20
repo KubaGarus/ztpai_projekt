@@ -11,7 +11,9 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+      # - postgres_data:/var/lib/postgresql/data
+    restart: always
 
   backend:
     image: php:8.2-cli
@@ -20,6 +22,7 @@ services:
       context: ./backend
     volumes:
       - ./backend:/app
+      - ./backend/config/jwt:/app/config/jwt
     working_dir: /app
     ports:
       - "8000:8000"
