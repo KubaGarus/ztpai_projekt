@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -7,12 +8,12 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity]
 #[ORM\Table(name: "users")]
-class User implements UserInterface, PasswordAuthenticatedUserInterface // 🟢 Dodano nowy interfejs
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
-    private int $id;
+    private ?int $id = null;
 
     #[ORM\Column(type: "string", length: 255)]
     private string $imie;
@@ -23,15 +24,45 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface // 🟢 
     #[ORM\Column(type: "string", length: 255, unique: true)]
     private string $login;
 
-    #[ORM\Column(name: "haslo", type: "string", length: 255)] // 🟢 Mapa kolumny "haslo"
+    #[ORM\Column(name: "haslo", type: "string", length: 255)]
     private string $password;
 
     #[ORM\Column(type: "json")]
     private array $roles = [];
 
-    public function getId(): int
+    // Gettery i Settery
+
+    public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    public function getImie(): string
+    {
+        return $this->imie;
+    }
+
+    public function setImie(string $imie): self
+    {
+        $this->imie = $imie;
+        return $this;
+    }
+
+    public function getNazwisko(): string
+    {
+        return $this->nazwisko;
+    }
+
+    public function setNazwisko(string $nazwisko): self
+    {
+        $this->nazwisko = $nazwisko;
+        return $this;
     }
 
     public function getLogin(): string
@@ -39,35 +70,43 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface // 🟢 
         return $this->login;
     }
 
-    public function getUserIdentifier(): string
+    public function setLogin(string $login): self
     {
-        return $this->login;
+        $this->login = $login;
+        return $this;
     }
 
-    // 🟢 Metoda wymagana przez PasswordAuthenticatedUserInterface
     public function getPassword(): string
     {
         return $this->password;
     }
 
-    public function setPassword(string $password): void
+    public function setPassword(string $password): self
     {
         $this->password = $password;
+        return $this;
     }
 
     public function getRoles(): array
     {
-        // Jeśli brak ról, domyślnie przypisz ROLE_USER
         return !empty($this->roles) ? $this->roles : ['ROLE_USER'];
     }
 
-    public function setRoles(array $roles): void
+    public function setRoles(array $roles): self
     {
         $this->roles = $roles;
+        return $this;
+    }
+
+    // Metody wymagane przez UserInterface
+
+    public function getUserIdentifier(): string
+    {
+        return $this->login;
     }
 
     public function eraseCredentials(): void
     {
-        // Jeśli przechowujesz dane wrażliwe w pamięci, usuń je tutaj
+        // Jeśli są jakieś wrażliwe dane w pamięci, można je tutaj wyczyścić
     }
 }

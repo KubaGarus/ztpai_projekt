@@ -22,6 +22,10 @@ security:
             provider: app_user_provider
             security: false
 
+        register:
+            pattern: ^/api/register$
+            security: false
+
         api:
             pattern: ^/api/
             stateless: true
