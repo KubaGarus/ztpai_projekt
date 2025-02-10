@@ -4,7 +4,8 @@ CREATE TABLE users (
     imie VARCHAR(255) NOT NULL,
     nazwisko VARCHAR(255) NOT NULL,
     login VARCHAR(255) NOT NULL UNIQUE,
-    haslo VARCHAR(255) NOT NULL
+    haslo VARCHAR(255) NOT NULL,
+    roles JSON NOT NULL
 );
 
 -- Opcjonalnie wstaw przykładowe dane
