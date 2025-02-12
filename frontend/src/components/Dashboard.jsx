@@ -31,24 +31,31 @@ const Dashboard = () => {
         fetchUserData();
     }, [navigate]);
 
+    const handleLogout = () => {
+        localStorage.removeItem("jwt");
+        navigate("/login");
+    };
+
     return (
         <div className="dashboard-container">
-            {error && <p className="error-message">{error}</p>}
-            {user ? (
-                <>
-                    <h2>Witaj, {user.imie} {user.nazwisko}!</h2>
-                    <p>Twój login: {user.login}</p>
-                    <p>Twoje role: {user.roles.join(", ")}</p>
-                    <button onClick={() => {
-                        localStorage.removeItem("jwt");
-                        navigate("/login");
-                    }}>
-                        Wyloguj się
-                    </button>
-                </>
-            ) : (
-                <p>Ładowanie danych...</p>
-            )}
+            {/* Pasek nawigacyjny */}
+            <div className="navbar">
+                {user ? (
+                    <div className="welcome">
+                        Witaj, {user.imie} {user.nazwisko}!
+                    </div>
+                ) : (
+                    <div className="welcome">Ładowanie danych...</div>
+                )}
+                <button className="logout-button" onClick={handleLogout}>
+                    Wyloguj się
+                </button>
+            </div>
+
+            {/* Główna zawartość */}
+            <div className="content">
+                <p>Tutaj znajdzie się główna zawartość strony.</p>
+            </div>
         </div>
     );
 };

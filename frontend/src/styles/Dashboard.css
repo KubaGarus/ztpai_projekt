@@ -1,32 +1,66 @@
-.dashboard-container {
-    max-width: 500px;
-    margin: 50px auto;
-    padding: 20px;
-    background: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    text-align: center;
+/* Resetowanie domyślnego marginesu i paddingu */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.dashboard-container h2 {
+/* Kontener całej strony - usunięcie scrolli */
+html, body {
+    height: 100%;
+    overflow: hidden; /* Zapobiega przewijaniu */
+}
+
+/* Główny kontener */
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* Pasek nawigacyjny */
+.navbar {
+    width: 100%;
+    height: 20vh;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    background: #f9f9f9;
+    border-bottom: 1px solid #ddd;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Styl powitania */
+.welcome {
+    font-size: 20px;
+    font-weight: bold;
     color: #333;
 }
 
-.dashboard-container p {
-    color: #666;
-}
-
-.dashboard-container button {
-    padding: 10px;
+/* Przycisk wylogowania */
+.logout-button {
+    padding: 12px 20px;
     background: #d9534f;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
-    margin-top: 10px;
+    font-size: 16px;
+    transition: background 0.3s ease;
 }
 
-.dashboard-container button:hover {
+.logout-button:hover {
     background: #c9302c;
+}
+
+/* Główna zawartość */
+.content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #666;
 }
