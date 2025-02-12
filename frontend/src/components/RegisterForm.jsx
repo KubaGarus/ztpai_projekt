@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "./../styles/LoginForm.css";
+import { useNavigate } from "react-router-dom"; 
 
 const RegisterForm = ({ setShowRegister }) => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         imie: "",
         nazwisko: "",
@@ -56,7 +58,9 @@ const RegisterForm = ({ setShowRegister }) => {
                 <input name="login" placeholder="Login" onChange={handleChange} />
                 <input name="password" type="password" placeholder="Hasło" onChange={handleChange} />
                 <button type="submit">Zarejestruj</button>
-                <p className="switch-form" onClick={() => setShowRegister(false)}>Masz już konto? Zaloguj się</p>
+                <p className="switch-form" onClick={() => navigate("/login")}>
+                    Masz już konto? Zaloguj się
+                </p>
             </form>
         </div>
     );
