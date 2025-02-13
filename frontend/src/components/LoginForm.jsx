@@ -3,9 +3,10 @@ import axios from "axios";
 import "./../styles/LoginForm.css";
 import { useNavigate } from "react-router-dom"; 
 
-const LoginForm = ({ setShowRegister }) => {
+const LoginForm = () => {
     const [credentials, setCredentials] = useState({ login: "", password: "" });
     const navigate = useNavigate();
+
     const handleChange = (e) => {
         setCredentials({ ...credentials, [e.target.name]: e.target.value });
     };
@@ -33,7 +34,10 @@ const LoginForm = ({ setShowRegister }) => {
                 <input name="login" placeholder="Login" onChange={handleChange} />
                 <input name="password" type="password" placeholder="Hasło" onChange={handleChange} />
                 <button type="submit">Zaloguj</button>
-                <p className="switch-form" onClick={() => setShowRegister(true)}>Nie masz konta? Zarejestruj się</p>
+                {/* Przekierowanie na rejestrację */}
+                <p className="switch-form" onClick={() => navigate("/register")}>
+                    Nie masz konta? Zarejestruj się
+                </p>
             </form>
         </div>
     );

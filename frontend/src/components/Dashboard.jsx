@@ -2,10 +2,13 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./../styles/Dashboard.css";
+import MyDocuments from "./MyDocuments";
+import NewDocument from "./NewDocument";
 
 const Dashboard = () => {
     const [user, setUser] = useState(null);
     const [error, setError] = useState("");
+    const [activePanel, setActivePanel] = useState("moje-prace"); // Domyślny widok
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -31,24 +34,63 @@ const Dashboard = () => {
         fetchUserData();
     }, [navigate]);
 
+    const handleLogout = () => {
+        localStorage.removeItem("jwt");
+        navigate("/login");
+    };
+
     return (
         <div className="dashboard-container">
-            {error && <p className="error-message">{error}</p>}
-            {user ? (
-                <>
-                    <h2>Witaj, {user.imie} {user.nazwisko}!</h2>
-                    <p>Twój login: {user.login}</p>
-                    <p>Twoje role: {user.roles.join(", ")}</p>
-                    <button onClick={() => {
-                        localStorage.removeItem("jwt");
-                        navigate("/login");
-                    }}>
+            {/* Pasek nawigacyjny */}
+            <div className="navbar">
+                <div className="welcome">
+                    {user ? `Witaj, ${user.imie} ${user.nazwisko}!` : "Ładowanie danych..."}
+                </div>
+                <div className="nav-buttons">
+                    {/* Zarządzanie użytkownikami - tylko dla ADMINA */}
+                    {user && user.roles.includes("ROLE_ADMIN") && (
+                        <button className="admin-button" onClick={() => navigate("/admin/users")}>
+                            Zarządzanie użytkownikami
+                        </button>
+                    )}
+                    <button className="logout-button" onClick={handleLogout}>
                         Wyloguj się
                     </button>
-                </>
-            ) : (
-                <p>Ładowanie danych...</p>
-            )}
+                </div>
+            </div>
+
+            {/* Główna zawartość */}
+            <div className="content">
+                {/* Menu boczne */}
+                <div className="sidebar">
+                    <ul>
+                        {/* Widoczne dla wszystkich */}
+                        <li
+                            className={activePanel === "moje-prace" ? "active" : ""}
+                            onClick={() => setActivePanel("moje-prace")}
+                        >
+                            Moje prace
+                        </li>
+
+                        {/* Widoczne dla ADMINA i PROMOTORA */}
+                        {user && (user.roles.includes("ROLE_ADMIN") || user.roles.includes("ROLE_PROMOTOR")) && (
+                            <li
+                                className={activePanel === "panel-promotora" ? "active" : ""}
+                                onClick={() => setActivePanel("panel-promotora")}
+                            >
+                                Panel promotora
+                            </li>
+                        )}
+                    </ul>
+                </div>
+
+                {/* Główna część strony */}
+                <div className="main-content">
+                    {activePanel === "moje-prace" && <MyDocuments setActivePanel={setActivePanel} />}
+                    {activePanel === "nowa-praca" && <NewDocument setActivePanel={setActivePanel} />}
+                    {activePanel === "panel-promotora" && <p>Panel promotora (w budowie)</p>}
+                </div>
+            </div>
         </div>
     );
 };
