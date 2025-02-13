@@ -2,10 +2,13 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./../styles/Dashboard.css";
+import MyDocuments from "./MyDocuments";
+import NewDocument from "./NewDocument";
 
 const Dashboard = () => {
     const [user, setUser] = useState(null);
     const [error, setError] = useState("");
+    const [activePanel, setActivePanel] = useState("moje-prace"); // Domyślny widok
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -60,14 +63,26 @@ const Dashboard = () => {
                 {/* Menu boczne */}
                 <div className="sidebar">
                     <ul>
-                        <li onClick={() => navigate("/moje-prace")}>Moje prace</li>
-                        <li onClick={() => navigate("/panel-promotora")}>Panel promotora</li>
+                        <li
+                            className={activePanel === "moje-prace" ? "active" : ""}
+                            onClick={() => setActivePanel("moje-prace")}
+                        >
+                            Moje prace
+                        </li>
+                        <li
+                            className={activePanel === "panel-promotora" ? "active" : ""}
+                            onClick={() => setActivePanel("panel-promotora")}
+                        >
+                            Panel promotora
+                        </li>
                     </ul>
                 </div>
 
                 {/* Główna część strony */}
                 <div className="main-content">
-                    <p>Tutaj znajdzie się główna zawartość strony.</p>
+                    {activePanel === "moje-prace" && <MyDocuments setActivePanel={setActivePanel} />}
+                    {activePanel === "nowa-praca" && <NewDocument setActivePanel={setActivePanel} />}
+                    {activePanel === "panel-promotora" && <p>Panel promotora (w budowie)</p>}
                 </div>
             </div>
         </div>

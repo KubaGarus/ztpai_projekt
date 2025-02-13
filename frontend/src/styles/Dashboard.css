@@ -121,3 +121,8 @@ html, body {
     font-size: 18px;
     color: #666;
 }
+
+.sidebar li.active {
+    background: #0275d8;
+    color: white;
+}

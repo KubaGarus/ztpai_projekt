@@ -4,6 +4,8 @@ import LoginForm from "./components/LoginForm";
 import RegisterForm from "./components/RegisterForm";
 import Dashboard from "./components/Dashboard";
 import AdminUsers from "./components/AdminUsers";
+import MyDocuments from "./components/MyDocuments";
+import NewDocument from "./components/NewDocument";
 
 const App = () => {
     const [showRegister, setShowRegister] = useState(false);
@@ -16,6 +18,8 @@ const App = () => {
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/admin/users" element={<AdminUsers />} />
                 <Route path="*" element={<LoginForm setShowRegister={setShowRegister} />} />
+                <Route path="/moje-prace" element={<MyDocuments />} />
+                <Route path="/nowa-praca" element={<NewDocument />} />
             </Routes>
         </Router>
     );
