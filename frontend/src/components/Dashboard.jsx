@@ -40,29 +40,35 @@ const Dashboard = () => {
         <div className="dashboard-container">
             {/* Pasek nawigacyjny */}
             <div className="navbar">
-
-                {user ? (
-                    <div className="welcome">
-                        Witaj, {user.imie} {user.nazwisko}!
-                    </div>
-                ) : (
-                    <div className="welcome">Ładowanie danych...</div>
-                )}
-
-                {/* Przycisk "Zarządzanie użytkownikami" tylko dla administratorów */}
-                {user && user.roles.includes("ROLE_ADMIN") && (
-                    <button className="admin-button" onClick={() => navigate("/admin/users")}>
-                        Zarządzanie użytkownikami
+                <div className="welcome">
+                    {user ? `Witaj, ${user.imie} ${user.nazwisko}!` : "Ładowanie danych..."}
+                </div>
+                <div className="nav-buttons">
+                    {user && user.roles.includes("ROLE_ADMIN") && (
+                        <button className="admin-button" onClick={() => navigate("/admin/users")}>
+                            Zarządzanie użytkownikami
+                        </button>
+                    )}
+                    <button className="logout-button" onClick={handleLogout}>
+                        Wyloguj się
                     </button>
-                )}
-                <button className="logout-button" onClick={handleLogout}>
-                    Wyloguj się
-                </button>
+                </div>
             </div>
 
             {/* Główna zawartość */}
             <div className="content">
-                <p>Tutaj znajdzie się główna zawartość strony.</p>
+                {/* Menu boczne */}
+                <div className="sidebar">
+                    <ul>
+                        <li onClick={() => navigate("/moje-prace")}>Moje prace</li>
+                        <li onClick={() => navigate("/panel-promotora")}>Panel promotora</li>
+                    </ul>
+                </div>
+
+                {/* Główna część strony */}
+                <div className="main-content">
+                    <p>Tutaj znajdzie się główna zawartość strony.</p>
+                </div>
             </div>
         </div>
     );
