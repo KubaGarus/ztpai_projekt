@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "./../styles/Dashboard.css";
 import MyDocuments from "./MyDocuments";
 import NewDocument from "./NewDocument";
+import PromotorPanel from "./PromotorPanel";
 
 const Dashboard = () => {
     const [user, setUser] = useState(null);
@@ -88,7 +89,7 @@ const Dashboard = () => {
                 <div className="main-content">
                     {activePanel === "moje-prace" && <MyDocuments setActivePanel={setActivePanel} />}
                     {activePanel === "nowa-praca" && <NewDocument setActivePanel={setActivePanel} />}
-                    {activePanel === "panel-promotora" && <p>Panel promotora (w budowie)</p>}
+                    {activePanel === "panel-promotora" && <PromotorPanel />}
                 </div>
             </div>
         </div>

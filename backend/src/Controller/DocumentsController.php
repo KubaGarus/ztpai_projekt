@@ -82,4 +82,33 @@ class DocumentsController extends AbstractController
 
         return new JsonResponse(['message' => 'Praca dodana pomyślnie.']);
     }
+
+    #[Route('/promoted', name: 'api_documents_promoted', methods: ['GET'])]
+    public function getPromotedDocuments(): JsonResponse
+    {
+        $user = $this->getUser();
+
+        if (!$user) {
+            return new JsonResponse(['error' => 'Nie jesteś zalogowany.'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
+        if (!in_array('ROLE_PROMOTOR', $user->getRoles()) && !in_array('ROLE_ADMIN', $user->getRoles())) {
+            return new JsonResponse(['error' => 'Brak dostępu.'], JsonResponse::HTTP_FORBIDDEN);
+        }
+        // error_log($user->getId());
+        $documents = $this->entityManager->getRepository(Documents::class)->findBy(['promotor' => $user]);
+
+        $data = array_map(function ($doc) {
+            return [
+                'id' => $doc->getId(),
+                'title' => $doc->getTitle(),
+                'content' => $doc->getContent(),
+                'status' => $doc->getStatus(),
+                'upload_date' => $doc->getUploadDate()->format('Y-m-d H:i:s'),
+                'student' => $doc->getUser()->getImie() . ' ' . $doc->getUser()->getNazwisko(),
+            ];
+        }, $documents);
+
+        return new JsonResponse($data);
+    }
 }
