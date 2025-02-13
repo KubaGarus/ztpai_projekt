@@ -37,7 +37,6 @@ class AuthController extends AbstractController
             return new JsonResponse(['error' => 'Invalid credentials.'], JsonResponse::HTTP_UNAUTHORIZED);
         }
     
-        error_log("Użytkownik: " . ($user ? "TAK" : "NIE"));
         try {
             $token = $this->jwtManager->create($user);
             return new JsonResponse(['token' => $token]);
@@ -88,7 +87,7 @@ class AuthController extends AbstractController
         $user->setNazwisko($data['nazwisko']);
         $user->setLogin($data['login']);
         $user->setPassword($this->passwordHasher->hashPassword($user, $data['password']));
-        $user->setRoles(["ROLE_USER"]); // Domyślna rola
+        $user->setRoles($data['roles']); // Domyślna rola
     
         $this->entityManager->persist($user);
         $this->entityManager->flush();

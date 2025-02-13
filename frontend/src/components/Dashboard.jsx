@@ -47,6 +47,7 @@ const Dashboard = () => {
                     {user ? `Witaj, ${user.imie} ${user.nazwisko}!` : "Ładowanie danych..."}
                 </div>
                 <div className="nav-buttons">
+                    {/* Zarządzanie użytkownikami - tylko dla ADMINA */}
                     {user && user.roles.includes("ROLE_ADMIN") && (
                         <button className="admin-button" onClick={() => navigate("/admin/users")}>
                             Zarządzanie użytkownikami
@@ -63,18 +64,23 @@ const Dashboard = () => {
                 {/* Menu boczne */}
                 <div className="sidebar">
                     <ul>
+                        {/* Widoczne dla wszystkich */}
                         <li
                             className={activePanel === "moje-prace" ? "active" : ""}
                             onClick={() => setActivePanel("moje-prace")}
                         >
                             Moje prace
                         </li>
-                        <li
-                            className={activePanel === "panel-promotora" ? "active" : ""}
-                            onClick={() => setActivePanel("panel-promotora")}
-                        >
-                            Panel promotora
-                        </li>
+
+                        {/* Widoczne dla ADMINA i PROMOTORA */}
+                        {user && (user.roles.includes("ROLE_ADMIN") || user.roles.includes("ROLE_PROMOTOR")) && (
+                            <li
+                                className={activePanel === "panel-promotora" ? "active" : ""}
+                                onClick={() => setActivePanel("panel-promotora")}
+                            >
+                                Panel promotora
+                            </li>
+                        )}
                     </ul>
                 </div>
 

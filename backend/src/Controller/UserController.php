@@ -73,4 +73,19 @@ class UserController extends AbstractController
 
         return new Response(null, Response::HTTP_NO_CONTENT);
     }
+
+    #[Route('/all', name: 'api_get_all_users', methods: ['GET'])]
+    public function getAllUsers(EntityManagerInterface $entityManager): JsonResponse
+    {
+        $users = $entityManager->getRepository(User::class)->findAll();
+
+        $data = array_map(fn($user) => [
+            'id' => $user->getId(),
+            'imie' => $user->getImie(),
+            'nazwisko' => $user->getNazwisko(),
+            'roles' => $user->getRoles(), // Przekazujemy całą tablicę ról
+        ], $users);
+
+        return new JsonResponse($data);
+    }
 }
