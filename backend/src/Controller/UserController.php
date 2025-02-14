@@ -33,7 +33,7 @@ class UserController extends AbstractController
     #[Route('', name: 'api_users_list', methods: ['GET'])]
     public function listUsers(): JsonResponse
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN'); // ✅ Ochrona tylko dla administratorów
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $users = $this->entityManager->getRepository(User::class)->findAll();
         $data = array_map(fn($user) => [
@@ -83,7 +83,7 @@ class UserController extends AbstractController
             'id' => $user->getId(),
             'imie' => $user->getImie(),
             'nazwisko' => $user->getNazwisko(),
-            'roles' => $user->getRoles(), // Przekazujemy całą tablicę ról
+            'roles' => $user->getRoles(),
         ], $users);
 
         return new JsonResponse($data);

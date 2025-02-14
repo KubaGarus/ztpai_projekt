@@ -16,7 +16,6 @@ const NewDocument = ({ setActivePanel }) => {
                 });
                 const users = await response.json();
 
-                // Filtrowanie użytkowników z rolą co najmniej ROLE_PROMOTOR
                 const filteredPromotors = users.filter(user => 
                     user.roles.includes("ROLE_PROMOTOR") || user.roles.includes("ROLE_ADMIN")
                 );
@@ -42,7 +41,7 @@ const NewDocument = ({ setActivePanel }) => {
                 },
                 body: JSON.stringify({ title, content, promotor_id: promotorId }),
             });
-            setActivePanel("moje-prace"); // Po dodaniu wracamy do listy prac
+            setActivePanel("moje-prace");
         } catch (err) {
             console.error("Błąd dodawania pracy:", err);
         }
@@ -64,8 +63,6 @@ const NewDocument = ({ setActivePanel }) => {
                     value={content} 
                     onChange={(e) => setContent(e.target.value)} 
                 />
-                
-                {/* Select do wyboru promotora */}
                 <select 
                     value={promotorId} 
                     onChange={(e) => setPromotorId(e.target.value)}

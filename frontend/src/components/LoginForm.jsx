@@ -34,7 +34,6 @@ const LoginForm = () => {
                 <input name="login" placeholder="Login" onChange={handleChange} />
                 <input name="password" type="password" placeholder="Hasło" onChange={handleChange} />
                 <button type="submit">Zaloguj</button>
-                {/* Przekierowanie na rejestrację */}
                 <p className="switch-form" onClick={() => navigate("/register")}>
                     Nie masz konta? Zarejestruj się
                 </p>

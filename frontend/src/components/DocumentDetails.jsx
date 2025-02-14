@@ -80,15 +80,13 @@ const DocumentDetails = ({ documentId, setSelectedDocumentId }) => {
     };
 
     if (!document || !user) return <p>Ładowanie...</p>;
-
+    console.log(user.roles);
     return (
         <div className="document-details-container">
             <button onClick={() => setSelectedDocumentId(null)} className="back-button">Powrót</button>
             <h2>{document.title}</h2>
             <p className="message-main-content">{document.content}</p>
             <p className="upload-date">Data utworzenia: {document.upload_date}</p>
-
-            {/* Sekcja rozmowy */}
             <div className="messages-section">
                 <h3>Rozmowa</h3>
                 <div className="messages">
@@ -108,19 +106,25 @@ const DocumentDetails = ({ documentId, setSelectedDocumentId }) => {
                     <button onClick={sendMessage}>Wyślij</button>
                 </div>
             </div>
-
-            {/* Przyciski akcji */}
-            <div className="document-actions">
-                {user.roles.includes("ROLE_PROMOTOR") && (
-                    <button onClick={() => updateDocumentStatus(1)} className="accept-button">Akceptuj</button>
-                )}
-                {user.roles.includes("ROLE_USER") && (
-                    <>
-                        <button onClick={() => updateDocumentStatus(2)} className="request-approval-button">Wyślij do akceptacji</button>
-                        <button onClick={() => updateDocumentStatus(3)} className="reject-button">Odrzuć</button>
-                    </>
-                )}
-            </div>
+            {(document.status !== 1 && document.status !== 3) && (
+                <div className="document-actions">
+                    {(user.roles.includes("ROLE_PROMOTOR") || user.roles.includes("ROLE_ADMIN")) && document.status === 2 && (
+                        <button onClick={() => updateDocumentStatus(1)} className="accept-button">
+                            Akceptuj
+                        </button>
+                    )}
+                    {user.roles.includes("ROLE_USER") && document.status === 4 && (
+                        <>
+                            <button onClick={() => updateDocumentStatus(2)} className="request-approval-button">
+                                Wyślij do akceptacji
+                            </button>
+                            <button onClick={() => updateDocumentStatus(3)} className="reject-button">
+                                Odrzuć
+                            </button>
+                        </>
+                    )}
+                </div>
+            )}
 
             {error && <p className="error-message">{error}</p>}
         </div>

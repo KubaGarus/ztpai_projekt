@@ -20,7 +20,6 @@ class ConversationsController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
-    // 📌 Pobranie wiadomości dla danego dokumentu
     #[Route('/{documentId}', name: 'api_get_conversations', methods: ['GET'])]
     public function getConversations(int $documentId): JsonResponse
     {
@@ -37,7 +36,6 @@ class ConversationsController extends AbstractController
         return new JsonResponse($data);
     }
 
-    // 📌 Wysyłanie wiadomości
     #[Route('/send', name: 'api_send_conversation', methods: ['POST'])]
     public function sendMessage(Request $request): JsonResponse
     {
@@ -56,11 +54,9 @@ class ConversationsController extends AbstractController
             return new JsonResponse(['error' => 'Dokument nie istnieje.'], JsonResponse::HTTP_NOT_FOUND);
         }
 
-        // 📌 Pobranie liczby istniejących wiadomości dla danego dokumentu
         $existingMessages = $this->entityManager->getRepository(Conversations::class)->count(['document' => $document]);
         $orderNum = $existingMessages + 1;
 
-        // 📌 Tworzenie nowej wiadomości
         $message = new Conversations();
         $message->setDocument($document);
         $message->setUser($user);

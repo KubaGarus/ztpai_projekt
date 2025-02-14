@@ -26,7 +26,6 @@ p {
     margin-bottom: 15px;
 }
 
-/* Stylowanie sekcji wiadomości */
 .messages-section {
     flex-grow: 1;
     display: flex;
@@ -39,14 +38,12 @@ p {
     max-height: 400px;
 }
 
-/* Lista wiadomości */
 .messages {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-/* Styl wiadomości */
 .message {
     padding: 12px;
     border-radius: 12px;
@@ -56,7 +53,6 @@ p {
     position: relative;
 }
 
-/* Wiadomość aktywnego użytkownika */
 .my-message {
     white-space: pre-wrap;
     background: #007bff;
@@ -64,7 +60,6 @@ p {
     align-self: flex-end;
 }
 
-/* Wiadomość innego użytkownika */
 .other-message {
     white-space: pre-wrap;
     background: #ddd;
@@ -76,7 +71,6 @@ p {
     white-space: pre-wrap;
 }
 
-/* Data wiadomości */
 .message-date {
     font-size: 12px;
     color: #666;
@@ -85,7 +79,6 @@ p {
     text-align: right;
 }
 
-/* Pole do wpisania wiadomości */
 .message-input {
     display: flex;
     align-items: center;
@@ -102,7 +95,6 @@ p {
     min-height: 60px;
 }
 
-/* Przyciski */
 .message-input button {
     padding: 12px 20px;
     background: #007bff;
@@ -118,7 +110,6 @@ p {
     background: #0056b3;
 }
 
-/* Przyciski akcji */
 .document-actions {
     display: flex;
     justify-content: space-between;
@@ -126,7 +117,6 @@ p {
     gap: 10px;
 }
 
-/* Stylowanie przycisków akcji */
 .document-actions button {
     flex: 1;
     padding: 12px;
@@ -137,7 +127,6 @@ p {
     transition: background 0.3s ease;
 }
 
-/* Kolory przycisków */
 .accept-button {
     background: #28a745;
     color: white;

@@ -47,9 +47,6 @@ class DocumentsController extends AbstractController
         return new JsonResponse($data);
     }
 
-    /**
-     * Dodawanie nowej pracy
-     */
     #[Route('/create', name: 'api_create_document', methods: ['POST'])]
     public function createDocument(Request $request): JsonResponse
     {
@@ -67,9 +64,8 @@ class DocumentsController extends AbstractController
         $document->setTitle($data['title']);
         $document->setContent($data['content'] ?? '');
         $document->setUser($user);
-        $document->setStatus(4); // Domyślny status: "w trakcie"
+        $document->setStatus(4);
 
-        // Przypisanie promotora (jeśli podano)
         if (!empty($data['promotor_id'])) {
             $promotor = $this->entityManager->getRepository(User::class)->find($data['promotor_id']);
             if ($promotor) {
@@ -95,7 +91,7 @@ class DocumentsController extends AbstractController
         if (!in_array('ROLE_PROMOTOR', $user->getRoles()) && !in_array('ROLE_ADMIN', $user->getRoles())) {
             return new JsonResponse(['error' => 'Brak dostępu.'], JsonResponse::HTTP_FORBIDDEN);
         }
-        // error_log($user->getId());
+
         $documents = $this->entityManager->getRepository(Documents::class)->findBy(['promotor' => $user]);
 
         $data = array_map(function ($doc) {
@@ -112,7 +108,6 @@ class DocumentsController extends AbstractController
         return new JsonResponse($data);
     }
 
-    // 📌 Pobieranie szczegółów dokumentu
     #[Route('/{id}', name: 'api_document_details', methods: ['GET'])]
     public function getDocumentDetails(int $id): JsonResponse
     {

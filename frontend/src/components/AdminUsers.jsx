@@ -61,7 +61,6 @@ const AdminUsers = () => {
                             <td>{user.nazwisko}</td>
                             <td>{user.roles.join(", ")}</td>
                             <td>
-                                {/* Przycisk usuwania pojawi się tylko jeśli użytkownik nie ma roli ADMIN */}
                                 {!user.roles.includes("ROLE_ADMIN") && (
                                     <button className="delete-button" onClick={() => handleDelete(user.id)}>
                                         Usuń

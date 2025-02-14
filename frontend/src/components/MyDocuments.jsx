@@ -26,6 +26,15 @@ const MyDocuments = ({ setActivePanel, setSelectedDocumentId }) => {
         fetchDocuments();
     }, []);
 
+    const getStatusText = (status) => {
+        switch (status) {
+            case 1: return "Zaakceptowany";
+            case 2: return "Czeka na akceptację";
+            case 3: return "Odrzucony";
+            case 4: return "W trakcie";
+            default: return "Nieznany status";
+        }
+    }
     return (
         <div className="documents-container">
             <h2>Moje Prace</h2>
@@ -38,6 +47,7 @@ const MyDocuments = ({ setActivePanel, setSelectedDocumentId }) => {
                     {documents.map((doc) => (
                         <li key={doc.id} className="document-item" onClick={() => setSelectedDocumentId(doc.id)}>
                             <strong>{doc.title}</strong> – Promotor: {doc.promotor}
+                            <span className={`status status-${doc.status}`}>Status: {getStatusText(doc.status)}</span>
                         </li>
                     ))}
                 </ul>

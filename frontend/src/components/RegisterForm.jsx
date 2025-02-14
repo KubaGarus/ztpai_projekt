@@ -10,7 +10,7 @@ const RegisterForm = ({ setShowRegister }) => {
         nazwisko: "",
         login: "",
         password: "",
-        isPromotor: false, // Nowe pole dla checkboxa
+        isPromotor: false,
     });
 
     const [error, setError] = useState("");
@@ -25,9 +25,8 @@ const RegisterForm = ({ setShowRegister }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError(""); // Resetowanie błędów
+        setError("");
 
-        // Walidacja po stronie klienta
         if (!formData.imie || !formData.nazwisko || !formData.login || !formData.password) {
             setError("Wszystkie pola są wymagane.");
             return;
@@ -41,7 +40,6 @@ const RegisterForm = ({ setShowRegister }) => {
             return;
         }
 
-        // Określenie roli użytkownika
         const roles = formData.isPromotor ? ["ROLE_PROMOTOR"] : ["ROLE_USER"];
 
         try {
@@ -72,7 +70,6 @@ const RegisterForm = ({ setShowRegister }) => {
                 <input name="login" placeholder="Login" onChange={handleChange} required />
                 <input name="password" type="password" placeholder="Hasło" onChange={handleChange} required />
                 
-                {/* Checkbox dla promotora */}
                 <label className="checkbox-label">
                     <input 
                         type="checkbox" 
