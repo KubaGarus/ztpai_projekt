@@ -1,0 +1,32 @@
+.promotor-panel-container {
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.documents-list {
+    list-style: none;
+    padding: 0;
+}
+
+.document-item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status {
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.status-1 { background: #5cb85c; color: white; } /* Akceptowany */
+.status-2 { background: #f0ad4e; color: white; } /* Oczekuje */
+.status-3 { background: #d9534f; color: white; } /* Odrzucony */
+.status-4 { background: #5bc0de; color: white; } /* W trakcie */

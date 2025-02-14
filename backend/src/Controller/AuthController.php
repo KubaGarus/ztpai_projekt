@@ -29,10 +29,8 @@ class AuthController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
       
-        // Pobranie użytkownika z bazy
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['login' => $data['login']]);
         
-        // Sprawdzenie, czy użytkownik istnieje i hasło jest poprawne
         if (!$user || !$this->passwordHasher->isPasswordValid($user, $data['password'])) {
             return new JsonResponse(['error' => 'Invalid credentials.'], JsonResponse::HTTP_UNAUTHORIZED);
         }
@@ -49,9 +47,6 @@ class AuthController extends AbstractController
                 'trace' => $e->getTraceAsString()
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
-        
-        // Zwrot tokena JWT
-        // return new JsonResponse(['token' => $this->jwtManager->create($user)]);
     }
     
 
@@ -60,34 +55,29 @@ class AuthController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
     
-        // Walidacja: Sprawdzenie, czy wszystkie wymagane pola są wypełnione
         if (empty($data['imie']) || empty($data['nazwisko']) || empty($data['login']) || empty($data['password'])) {
             return new JsonResponse(['error' => 'Wszystkie pola są wymagane.'], JsonResponse::HTTP_BAD_REQUEST);
         }
     
-        // Walidacja: Minimalna długość loginu
         if (strlen($data['login']) < 4) {
             return new JsonResponse(['error' => 'Login musi mieć co najmniej 4 znaki.'], JsonResponse::HTTP_BAD_REQUEST);
         }
     
-        // Walidacja: Minimalna długość hasła
         if (strlen($data['password']) < 6) {
             return new JsonResponse(['error' => 'Hasło musi mieć co najmniej 6 znaków.'], JsonResponse::HTTP_BAD_REQUEST);
         }
     
-        // Sprawdzenie, czy użytkownik już istnieje
         $existingUser = $this->entityManager->getRepository(User::class)->findOneBy(['login' => $data['login']]);
         if ($existingUser) {
             return new JsonResponse(['error' => 'Użytkownik o takim loginie już istnieje.'], JsonResponse::HTTP_BAD_REQUEST);
         }
     
-        // Tworzenie nowego użytkownika
         $user = new User();
         $user->setImie($data['imie']);
         $user->setNazwisko($data['nazwisko']);
         $user->setLogin($data['login']);
         $user->setPassword($this->passwordHasher->hashPassword($user, $data['password']));
-        $user->setRoles($data['roles']); // Domyślna rola
+        $user->setRoles($data['roles']);
     
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -98,7 +88,7 @@ class AuthController extends AbstractController
     #[Route('/dashboard', name: 'api_dashboard', methods: ['GET'])]
     public function dashboard(): JsonResponse
     {
-        $user = $this->getUser(); // Pobiera zalogowanego użytkownika na podstawie tokena
+        $user = $this->getUser();
     
         if (!$user) {
             return new JsonResponse(['error' => 'Nie jesteś zalogowany.'], JsonResponse::HTTP_UNAUTHORIZED);

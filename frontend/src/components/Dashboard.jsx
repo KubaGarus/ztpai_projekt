@@ -4,11 +4,15 @@ import { useNavigate } from "react-router-dom";
 import "./../styles/Dashboard.css";
 import MyDocuments from "./MyDocuments";
 import NewDocument from "./NewDocument";
+import PromotorPanel from "./PromotorPanel";
+import DocumentDetails from "./DocumentDetails";
 
 const Dashboard = () => {
     const [user, setUser] = useState(null);
     const [error, setError] = useState("");
-    const [activePanel, setActivePanel] = useState("moje-prace"); // Domyślny widok
+    const [activePanel, setActivePanel] = useState("moje-prace");
+    const [selectedDocumentId, setSelectedDocumentId] = useState(null);
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -41,13 +45,11 @@ const Dashboard = () => {
 
     return (
         <div className="dashboard-container">
-            {/* Pasek nawigacyjny */}
             <div className="navbar">
                 <div className="welcome">
                     {user ? `Witaj, ${user.imie} ${user.nazwisko}!` : "Ładowanie danych..."}
                 </div>
                 <div className="nav-buttons">
-                    {/* Zarządzanie użytkownikami - tylko dla ADMINA */}
                     {user && user.roles.includes("ROLE_ADMIN") && (
                         <button className="admin-button" onClick={() => navigate("/admin/users")}>
                             Zarządzanie użytkownikami
@@ -58,37 +60,51 @@ const Dashboard = () => {
                     </button>
                 </div>
             </div>
-
-            {/* Główna zawartość */}
             <div className="content">
-                {/* Menu boczne */}
                 <div className="sidebar">
                     <ul>
-                        {/* Widoczne dla wszystkich */}
                         <li
                             className={activePanel === "moje-prace" ? "active" : ""}
-                            onClick={() => setActivePanel("moje-prace")}
+                            onClick={() => {
+                                setSelectedDocumentId(null);
+                                setActivePanel("moje-prace");
+                            }}
                         >
                             Moje prace
                         </li>
-
-                        {/* Widoczne dla ADMINA i PROMOTORA */}
                         {user && (user.roles.includes("ROLE_ADMIN") || user.roles.includes("ROLE_PROMOTOR")) && (
                             <li
                                 className={activePanel === "panel-promotora" ? "active" : ""}
-                                onClick={() => setActivePanel("panel-promotora")}
+                                onClick={() => {
+                                    setSelectedDocumentId(null);
+                                    setActivePanel("panel-promotora");
+                                }}
                             >
                                 Panel promotora
                             </li>
                         )}
                     </ul>
                 </div>
-
-                {/* Główna część strony */}
                 <div className="main-content">
-                    {activePanel === "moje-prace" && <MyDocuments setActivePanel={setActivePanel} />}
-                    {activePanel === "nowa-praca" && <NewDocument setActivePanel={setActivePanel} />}
-                    {activePanel === "panel-promotora" && <p>Panel promotora (w budowie)</p>}
+                    {selectedDocumentId ? (
+                        <DocumentDetails
+                            documentId={selectedDocumentId}
+                            setSelectedDocumentId={setSelectedDocumentId}
+                        />
+                    ) : (
+                        <>
+                            {activePanel === "moje-prace" && (
+                                <MyDocuments
+                                    setActivePanel={setActivePanel}
+                                    setSelectedDocumentId={setSelectedDocumentId}
+                                />
+                            )}
+                            {activePanel === "nowa-praca" && <NewDocument setActivePanel={setActivePanel} />}
+                            {activePanel === "panel-promotora" && (
+                                <PromotorPanel setSelectedDocumentId={setSelectedDocumentId} />
+                            )}
+                        </>
+                    )}
                 </div>
             </div>
         </div>

@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "./../styles/MyDocuments.css";
+import "./../styles/PromotorPanel.css";
 
-const MyDocuments = ({ setActivePanel, setSelectedDocumentId }) => {
+const PromotorPanel = ({ setSelectedDocumentId }) => {
     const [documents, setDocuments] = useState([]);
     const [error, setError] = useState("");
 
     useEffect(() => {
-        const fetchDocuments = async () => {
+        const fetchPromotedDocuments = async () => {
             try {
                 const token = localStorage.getItem("jwt");
-                const response = await axios.get("http://localhost:8000/api/documents/my", {
+                const response = await axios.get("http://localhost:8000/api/documents/promoted", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                if (response.data.message) {
+
+                if (response.data.error) {
+                    setError(response.data.error);
                     setDocuments([]);
                 } else {
                     setDocuments(response.data);
@@ -23,7 +25,7 @@ const MyDocuments = ({ setActivePanel, setSelectedDocumentId }) => {
             }
         };
 
-        fetchDocuments();
+        fetchPromotedDocuments();
     }, []);
 
     const getStatusText = (status) => {
@@ -36,26 +38,23 @@ const MyDocuments = ({ setActivePanel, setSelectedDocumentId }) => {
         }
     }
     return (
-        <div className="documents-container">
-            <h2>Moje Prace</h2>
-            <button className="new-document-button" onClick={() => setActivePanel("nowa-praca")}>
-                Dodaj nową pracę
-            </button>
+        <div className="promotor-panel-container">
+            <h2>Prace pod moją opieką</h2>
             {error && <p className="error-message">{error}</p>}
             {documents.length > 0 ? (
                 <ul className="documents-list">
                     {documents.map((doc) => (
                         <li key={doc.id} className="document-item" onClick={() => setSelectedDocumentId(doc.id)}>
-                            <strong>{doc.title}</strong> – Promotor: {doc.promotor}
+                            <strong>{doc.title}</strong> – {doc.student}  
                             <span className={`status status-${doc.status}`}>Status: {getStatusText(doc.status)}</span>
                         </li>
                     ))}
                 </ul>
             ) : (
-                <p>Nie posiadasz żadnych prac.</p>
+                <p>Nie masz przypisanych prac.</p>
             )}
         </div>
     );
 };
 
-export default MyDocuments;
+export default PromotorPanel;

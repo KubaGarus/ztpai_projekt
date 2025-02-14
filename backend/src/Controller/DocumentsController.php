@@ -47,9 +47,6 @@ class DocumentsController extends AbstractController
         return new JsonResponse($data);
     }
 
-    /**
-     * Dodawanie nowej pracy
-     */
     #[Route('/create', name: 'api_create_document', methods: ['POST'])]
     public function createDocument(Request $request): JsonResponse
     {
@@ -67,9 +64,8 @@ class DocumentsController extends AbstractController
         $document->setTitle($data['title']);
         $document->setContent($data['content'] ?? '');
         $document->setUser($user);
-        $document->setStatus(4); // Domyślny status: "w trakcie"
+        $document->setStatus(4);
 
-        // Przypisanie promotora (jeśli podano)
         if (!empty($data['promotor_id'])) {
             $promotor = $this->entityManager->getRepository(User::class)->find($data['promotor_id']);
             if ($promotor) {
@@ -81,5 +77,76 @@ class DocumentsController extends AbstractController
         $this->entityManager->flush();
 
         return new JsonResponse(['message' => 'Praca dodana pomyślnie.']);
+    }
+
+    #[Route('/promoted', name: 'api_documents_promoted', methods: ['GET'])]
+    public function getPromotedDocuments(): JsonResponse
+    {
+        $user = $this->getUser();
+
+        if (!$user) {
+            return new JsonResponse(['error' => 'Nie jesteś zalogowany.'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
+        if (!in_array('ROLE_PROMOTOR', $user->getRoles()) && !in_array('ROLE_ADMIN', $user->getRoles())) {
+            return new JsonResponse(['error' => 'Brak dostępu.'], JsonResponse::HTTP_FORBIDDEN);
+        }
+
+        $documents = $this->entityManager->getRepository(Documents::class)->findBy(['promotor' => $user]);
+
+        $data = array_map(function ($doc) {
+            return [
+                'id' => $doc->getId(),
+                'title' => $doc->getTitle(),
+                'content' => $doc->getContent(),
+                'status' => $doc->getStatus(),
+                'upload_date' => $doc->getUploadDate()->format('Y-m-d H:i:s'),
+                'student' => $doc->getUser()->getImie() . ' ' . $doc->getUser()->getNazwisko(),
+            ];
+        }, $documents);
+
+        return new JsonResponse($data);
+    }
+
+    #[Route('/{id}', name: 'api_document_details', methods: ['GET'])]
+    public function getDocumentDetails(int $id): JsonResponse
+    {
+        $document = $this->entityManager->getRepository(Documents::class)->find($id);
+
+        if (!$document) {
+            return new JsonResponse(['error' => 'Dokument nie istnieje.'], JsonResponse::HTTP_NOT_FOUND);
+        }
+
+        return new JsonResponse([
+            'id' => $document->getId(),
+            'title' => $document->getTitle(),
+            'content' => $document->getContent(),
+            'status' => $document->getStatus(),
+            'upload_date' => $document->getUploadDate()->format('Y-m-d H:i:s'),
+        ]);
+    }
+
+    #[Route('/{id}/status', name: 'api_update_document_status', methods: ['PATCH'])]
+    public function updateDocumentStatus(int $id, Request $request): JsonResponse
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse(['error' => 'Nie jesteś zalogowany.'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
+        $document = $this->entityManager->getRepository(Documents::class)->find($id);
+        if (!$document) {
+            return new JsonResponse(['error' => 'Dokument nie istnieje.'], JsonResponse::HTTP_NOT_FOUND);
+        }
+
+        $data = json_decode($request->getContent(), true);
+        if (!isset($data['status'])) {
+            return new JsonResponse(['error' => 'Nie podano statusu.'], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        $document->setStatus($data['status']);
+        $this->entityManager->flush();
+
+        return new JsonResponse(['message' => 'Status zaktualizowany pomyślnie.']);
     }
 }

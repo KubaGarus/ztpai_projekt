@@ -98,7 +98,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    // Metody wymagane przez UserInterface
 
     public function getUserIdentifier(): string
     {

@@ -1,7 +1,7 @@
 nelmio_cors:
     defaults:
         allow_origin: ['http://localhost:3000'] # Dopuszcza frontend działający na localhost:3000
-        allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'DELETE']
+        allow_methods: ['GET', 'OPTIONS', 'PATCH', 'POST', 'PUT', 'DELETE']
         allow_headers: ['Content-Type', 'Authorization']
         expose_headers: ['Content-Type', 'Authorization']
         max_age: 3600
@@ -10,7 +10,7 @@ nelmio_cors:
     paths:
         '^/api/':  # Obsługa CORS dla endpointów zaczynających się od /api/
             allow_origin: ['http://localhost:3000']
-            allow_methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+            allow_methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS']
             allow_headers: ['Content-Type', 'Authorization']
             expose_headers: ['Content-Type', 'Authorization']
             max_age: 3600
