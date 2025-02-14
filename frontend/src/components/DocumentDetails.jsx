@@ -69,7 +69,6 @@ const DocumentDetails = ({ documentId, setSelectedDocumentId }) => {
     const updateDocumentStatus = async (status) => {
         try {
             const token = localStorage.getItem("jwt");
-            console.log(documentId);
             await axios.patch(`http://localhost:8000/api/documents/${documentId}/status`, 
                 { status }, 
                 { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
@@ -86,9 +85,10 @@ const DocumentDetails = ({ documentId, setSelectedDocumentId }) => {
         <div className="document-details-container">
             <button onClick={() => setSelectedDocumentId(null)} className="back-button">Powrót</button>
             <h2>{document.title}</h2>
-            <p>{document.content}</p>
+            <p className="message-main-content">{document.content}</p>
             <p className="upload-date">Data utworzenia: {document.upload_date}</p>
 
+            {/* Sekcja rozmowy */}
             <div className="messages-section">
                 <h3>Rozmowa</h3>
                 <div className="messages">
@@ -99,23 +99,28 @@ const DocumentDetails = ({ documentId, setSelectedDocumentId }) => {
                         </div>
                     ))}
                 </div>
-                <textarea 
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    placeholder="Napisz wiadomość..."
-                />
-                <button onClick={sendMessage}>Wyślij</button>
+                <div className="message-input">
+                    <textarea 
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        placeholder="Napisz wiadomość..."
+                    />
+                    <button onClick={sendMessage}>Wyślij</button>
+                </div>
             </div>
 
-            {user.roles.includes("ROLE_PROMOTOR") && (
-                <button onClick={() => updateDocumentStatus(1)} className="accept-button">Akceptuj</button>
-            )}
-            {user.roles.includes("ROLE_USER") && (
-                <>
-                    <button onClick={() => updateDocumentStatus(2)} className="request-approval-button">Wyślij do akceptacji</button>
-                    <button onClick={() => updateDocumentStatus(3)} className="reject-button">Odrzuć</button>
-                </>
-            )}
+            {/* Przyciski akcji */}
+            <div className="document-actions">
+                {user.roles.includes("ROLE_PROMOTOR") && (
+                    <button onClick={() => updateDocumentStatus(1)} className="accept-button">Akceptuj</button>
+                )}
+                {user.roles.includes("ROLE_USER") && (
+                    <>
+                        <button onClick={() => updateDocumentStatus(2)} className="request-approval-button">Wyślij do akceptacji</button>
+                        <button onClick={() => updateDocumentStatus(3)} className="reject-button">Odrzuć</button>
+                    </>
+                )}
+            </div>
 
             {error && <p className="error-message">{error}</p>}
         </div>
