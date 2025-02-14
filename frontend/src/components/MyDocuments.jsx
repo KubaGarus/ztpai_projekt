@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./../styles/MyDocuments.css";
 
-const MyDocuments = ({ setActivePanel }) => {
+const MyDocuments = ({ setActivePanel, setSelectedDocumentId }) => {
     const [documents, setDocuments] = useState([]);
     const [error, setError] = useState("");
 
@@ -36,7 +36,7 @@ const MyDocuments = ({ setActivePanel }) => {
             {documents.length > 0 ? (
                 <ul className="documents-list">
                     {documents.map((doc) => (
-                        <li key={doc.id} className="document-item">
+                        <li key={doc.id} className="document-item" onClick={() => setSelectedDocumentId(doc.id)}>
                             <strong>{doc.title}</strong> – Promotor: {doc.promotor}
                         </li>
                     ))}

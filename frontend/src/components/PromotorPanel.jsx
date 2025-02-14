@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./../styles/PromotorPanel.css";
 
-const PromotorPanel = () => {
+const PromotorPanel = ({ setSelectedDocumentId }) => {
     const [documents, setDocuments] = useState([]);
     const [error, setError] = useState("");
 
@@ -28,16 +28,6 @@ const PromotorPanel = () => {
         fetchPromotedDocuments();
     }, []);
 
-    const getStatusText = (status) => {
-        switch (status) {
-            case 1: return "Zaakceptowany";
-            case 2: return "Czeka na akceptację";
-            case 3: return "Odrzucony";
-            case 4: return "W trakcie";
-            default: return "Nieznany status";
-        }
-    }
-
     return (
         <div className="promotor-panel-container">
             <h2>Prace pod moją opieką</h2>
@@ -45,9 +35,9 @@ const PromotorPanel = () => {
             {documents.length > 0 ? (
                 <ul className="documents-list">
                     {documents.map((doc) => (
-                        <li key={doc.id} className="document-item">
+                        <li key={doc.id} className="document-item" onClick={() => setSelectedDocumentId(doc.id)}>
                             <strong>{doc.title}</strong> – {doc.student}  
-                            <span className={`status status-${doc.status}`}>Status: {getStatusText(doc.status)}</span>
+                            <span className={`status status-${doc.status}`}>Status: {doc.status}</span>
                         </li>
                     ))}
                 </ul>

@@ -5,11 +5,14 @@ import "./../styles/Dashboard.css";
 import MyDocuments from "./MyDocuments";
 import NewDocument from "./NewDocument";
 import PromotorPanel from "./PromotorPanel";
+import DocumentDetails from "./DocumentDetails"; // Nowy komponent
 
 const Dashboard = () => {
     const [user, setUser] = useState(null);
     const [error, setError] = useState("");
     const [activePanel, setActivePanel] = useState("moje-prace"); // Domyślny widok
+    const [selectedDocumentId, setSelectedDocumentId] = useState(null); // 🔥 Nowy stan dla szczegółów dokumentu
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -68,7 +71,10 @@ const Dashboard = () => {
                         {/* Widoczne dla wszystkich */}
                         <li
                             className={activePanel === "moje-prace" ? "active" : ""}
-                            onClick={() => setActivePanel("moje-prace")}
+                            onClick={() => {
+                                setSelectedDocumentId(null); // Resetujemy ID dokumentu, jeśli zmieniamy panel
+                                setActivePanel("moje-prace");
+                            }}
                         >
                             Moje prace
                         </li>
@@ -77,7 +83,10 @@ const Dashboard = () => {
                         {user && (user.roles.includes("ROLE_ADMIN") || user.roles.includes("ROLE_PROMOTOR")) && (
                             <li
                                 className={activePanel === "panel-promotora" ? "active" : ""}
-                                onClick={() => setActivePanel("panel-promotora")}
+                                onClick={() => {
+                                    setSelectedDocumentId(null); // Resetujemy ID dokumentu, jeśli zmieniamy panel
+                                    setActivePanel("panel-promotora");
+                                }}
                             >
                                 Panel promotora
                             </li>
@@ -87,9 +96,25 @@ const Dashboard = () => {
 
                 {/* Główna część strony */}
                 <div className="main-content">
-                    {activePanel === "moje-prace" && <MyDocuments setActivePanel={setActivePanel} />}
-                    {activePanel === "nowa-praca" && <NewDocument setActivePanel={setActivePanel} />}
-                    {activePanel === "panel-promotora" && <PromotorPanel />}
+                    {selectedDocumentId ? (
+                        <DocumentDetails
+                            documentId={selectedDocumentId}
+                            setSelectedDocumentId={setSelectedDocumentId} // ✅ Przekazanie funkcji
+                        />
+                    ) : (
+                        <>
+                            {activePanel === "moje-prace" && (
+                                <MyDocuments
+                                    setActivePanel={setActivePanel}
+                                    setSelectedDocumentId={setSelectedDocumentId} // ✅ Przekazanie funkcji
+                                />
+                            )}
+                            {activePanel === "nowa-praca" && <NewDocument setActivePanel={setActivePanel} />}
+                            {activePanel === "panel-promotora" && (
+                                <PromotorPanel setSelectedDocumentId={setSelectedDocumentId} /> // ✅ Przekazanie funkcji
+                            )}
+                        </>
+                    )}
                 </div>
             </div>
         </div>

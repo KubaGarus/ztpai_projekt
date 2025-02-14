@@ -111,4 +111,47 @@ class DocumentsController extends AbstractController
 
         return new JsonResponse($data);
     }
+
+    // 📌 Pobieranie szczegółów dokumentu
+    #[Route('/{id}', name: 'api_document_details', methods: ['GET'])]
+    public function getDocumentDetails(int $id): JsonResponse
+    {
+        $document = $this->entityManager->getRepository(Documents::class)->find($id);
+
+        if (!$document) {
+            return new JsonResponse(['error' => 'Dokument nie istnieje.'], JsonResponse::HTTP_NOT_FOUND);
+        }
+
+        return new JsonResponse([
+            'id' => $document->getId(),
+            'title' => $document->getTitle(),
+            'content' => $document->getContent(),
+            'status' => $document->getStatus(),
+            'upload_date' => $document->getUploadDate()->format('Y-m-d H:i:s'),
+        ]);
+    }
+
+    #[Route('/{id}/status', name: 'api_update_document_status', methods: ['PATCH'])]
+    public function updateDocumentStatus(int $id, Request $request): JsonResponse
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse(['error' => 'Nie jesteś zalogowany.'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
+        $document = $this->entityManager->getRepository(Documents::class)->find($id);
+        if (!$document) {
+            return new JsonResponse(['error' => 'Dokument nie istnieje.'], JsonResponse::HTTP_NOT_FOUND);
+        }
+
+        $data = json_decode($request->getContent(), true);
+        if (!isset($data['status'])) {
+            return new JsonResponse(['error' => 'Nie podano statusu.'], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        $document->setStatus($data['status']);
+        $this->entityManager->flush();
+
+        return new JsonResponse(['message' => 'Status zaktualizowany pomyślnie.']);
+    }
 }
