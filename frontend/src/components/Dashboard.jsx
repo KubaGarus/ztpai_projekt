@@ -18,6 +18,8 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             const token = localStorage.getItem("jwt");
+            
+    console.log(token);
             if (!token) {
                 navigate("/login");
                 return;

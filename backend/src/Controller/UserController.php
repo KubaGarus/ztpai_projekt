@@ -27,7 +27,9 @@ class UserController extends AbstractController
      *     path="/api/users",
      *     summary="Pobiera listę wszystkich użytkowników",
      *     security={{ "bearerAuth":{} }},
-     *     @OA\Response(response=200, description="Lista użytkowników")
+     *     @OA\Response(response=200, description="Lista użytkowników"),
+     *     @OA\Response(response=401, description="Nieautoryzowany"),
+     *     @OA\Response(response=403, description="Brak dostępu")
      * )
      */
     #[Route('', name: 'api_users_list', methods: ['GET'])]
@@ -55,6 +57,7 @@ class UserController extends AbstractController
      *     @OA\Parameter(name="id", in="path", required=true, description="ID użytkownika"),
      *     @OA\Response(response=204, description="Użytkownik usunięty"),
      *     @OA\Response(response=403, description="Brak dostępu"),
+     *     @OA\Response(response=404, description="Użytkownik nie znaleziony")
      * )
      */
     #[Route('/{id}', name: 'api_users_delete', methods: ['DELETE'])]
@@ -74,6 +77,16 @@ class UserController extends AbstractController
         return new Response(null, Response::HTTP_NO_CONTENT);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/users/all",
+     *     summary="Pobiera listę wszystkich użytkowników",
+     *     security={{ "bearerAuth":{} }},
+     *     @OA\Response(response=200, description="Lista użytkowników"),
+     *     @OA\Response(response=401, description="Nieautoryzowany"),
+     *     @OA\Response(response=403, description="Brak dostępu")
+     * )
+     */
     #[Route('/all', name: 'api_get_all_users', methods: ['GET'])]
     public function getAllUsers(EntityManagerInterface $entityManager): JsonResponse
     {

@@ -80,7 +80,6 @@ const DocumentDetails = ({ documentId, setSelectedDocumentId }) => {
     };
 
     if (!document || !user) return <p>Ładowanie...</p>;
-    console.log(user.roles);
     return (
         <div className="document-details-container">
             <button onClick={() => setSelectedDocumentId(null)} className="back-button">Powrót</button>

@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use OpenApi\Annotations as OA;
 
 #[Route('/api/conversations')]
 class ConversationsController extends AbstractController
@@ -20,6 +21,38 @@ class ConversationsController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/conversations/{documentId}",
+     *     summary="Get conversations for a specific document",
+     *     description="Retrieve all conversations related to a specific document, ordered by date.",
+     *     @OA\Parameter(
+     *         name="documentId",
+     *         in="path",
+     *         description="The ID of the document to get conversations for",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of conversations",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="content", type="string"),
+     *                 @OA\Property(property="user_id", type="integer"),
+     *                 @OA\Property(property="date", type="string", format="date-time")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Document not found"
+     *     )
+     * )
+     */
     #[Route('/{documentId}', name: 'api_get_conversations', methods: ['GET'])]
     public function getConversations(int $documentId): JsonResponse
     {
@@ -36,6 +69,42 @@ class ConversationsController extends AbstractController
         return new JsonResponse($data);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/conversations/send",
+     *     summary="Send a new conversation message",
+     *     description="Send a message related to a specific document.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"document_id", "content"},
+     *             @OA\Property(property="document_id", type="integer", description="The ID of the document"),
+     *             @OA\Property(property="content", type="string", description="The content of the message")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Message sent successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="order", type="integer")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid input data"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User not logged in"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Document not found"
+     *     )
+     * )
+     */
     #[Route('/send', name: 'api_send_conversation', methods: ['POST'])]
     public function sendMessage(Request $request): JsonResponse
     {

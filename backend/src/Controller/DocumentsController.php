@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use OpenApi\Annotations as OA;
 
 #[Route('/api/documents')]
 class DocumentsController extends AbstractController
@@ -21,7 +22,28 @@ class DocumentsController extends AbstractController
     }
 
     /**
-     * Pobieranie prac zalogowanego użytkownika
+     * @OA\Get(
+     *     path="/api/documents/my",
+     *     summary="Get documents for logged in user",
+     *     description="Retrieve all documents uploaded by the logged in user.",
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of documents",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="title", type="string"),
+     *                 @OA\Property(property="promotor", type="string")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User not logged in"
+     *     )
+     * )
      */
     #[Route('/my', name: 'api_my_documents', methods: ['GET'])]
     public function getUserDocuments(): JsonResponse
@@ -47,6 +69,38 @@ class DocumentsController extends AbstractController
         return new JsonResponse($data);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/documents/create",
+     *     summary="Create a new document",
+     *     description="Create a new document for the logged in user.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"title"},
+     *             @OA\Property(property="title", type="string", description="Title of the document"),
+     *             @OA\Property(property="content", type="string", description="Content of the document"),
+     *             @OA\Property(property="promotor_id", type="integer", description="ID of the promotor")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Document created successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Bad Request - Missing required fields"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User not logged in"
+     *     )
+     * )
+     */
     #[Route('/create', name: 'api_create_document', methods: ['POST'])]
     public function createDocument(Request $request): JsonResponse
     {
@@ -79,6 +133,37 @@ class DocumentsController extends AbstractController
         return new JsonResponse(['message' => 'Praca dodana pomyślnie.']);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/documents/promoted",
+     *     summary="Get promoted documents for the logged in promotor",
+     *     description="Retrieve documents that are promoted by the logged in user.",
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of promoted documents",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="title", type="string"),
+     *                 @OA\Property(property="content", type="string"),
+     *                 @OA\Property(property="status", type="integer"),
+     *                 @OA\Property(property="upload_date", type="string", format="date-time"),
+     *                 @OA\Property(property="student", type="string")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User not logged in"
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden - User does not have sufficient permissions"
+     *     )
+     * )
+     */
     #[Route('/promoted', name: 'api_documents_promoted', methods: ['GET'])]
     public function getPromotedDocuments(): JsonResponse
     {
@@ -108,6 +193,36 @@ class DocumentsController extends AbstractController
         return new JsonResponse($data);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/documents/{id}",
+     *     summary="Get details of a specific document",
+     *     description="Retrieve the details of a specific document by its ID.",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="The ID of the document to get details for",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Document details",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="id", type="integer"),
+     *             @OA\Property(property="title", type="string"),
+     *             @OA\Property(property="content", type="string"),
+     *             @OA\Property(property="status", type="integer"),
+     *             @OA\Property(property="upload_date", type="string", format="date-time")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Document not found"
+     *     )
+     * )
+     */
     #[Route('/{id}', name: 'api_document_details', methods: ['GET'])]
     public function getDocumentDetails(int $id): JsonResponse
     {
@@ -117,7 +232,7 @@ class DocumentsController extends AbstractController
             return new JsonResponse(['error' => 'Dokument nie istnieje.'], JsonResponse::HTTP_NOT_FOUND);
         }
 
-        return new JsonResponse([
+        return new JsonResponse([ 
             'id' => $document->getId(),
             'title' => $document->getTitle(),
             'content' => $document->getContent(),
@@ -126,6 +241,47 @@ class DocumentsController extends AbstractController
         ]);
     }
 
+    /**
+     * @OA\Patch(
+     *     path="/api/documents/{id}/status",
+     *     summary="Update the status of a document",
+     *     description="Update the status of a specific document.",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="The ID of the document to update",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"status"},
+     *             @OA\Property(property="status", type="integer", description="The new status of the document")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Document status updated successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Bad Request - Missing required fields"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User not logged in"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Document not found"
+     *     )
+     * )
+     */
     #[Route('/{id}/status', name: 'api_update_document_status', methods: ['PATCH'])]
     public function updateDocumentStatus(int $id, Request $request): JsonResponse
     {
